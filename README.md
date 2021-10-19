@@ -1,5 +1,5 @@
 # Time-Series-Analysis-in-R
-Financial Time Series in R including Univariate Time Series (ARMA, ARIMA, ARFIMA), Volatility Modeling and Forecasting, Value at Risk (VaR)Forecasting and  Backtesting
+Financial Time Series in R including Univariate Time Series (ARMA, ARIMA, ARFIMA), Volatility Modeling and Forecasting, Value at Risk (VaR) Forecasting and Backtesting
 
 # Table of Contents
 
