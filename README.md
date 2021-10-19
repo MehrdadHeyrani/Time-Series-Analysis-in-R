@@ -1,14 +1,43 @@
 # Time-Series-Analysis-in-R
-Financial Time Series in R  
+Financial Time Series in R including Univariate Time Series (ARMA, ARIMA, ARFIMA), Volatility Modeling and Forecasting, Value at Risk (VaR)Forecasting and  Backtesting
+
 # Table of Contents
-## introduction 
 
-## Univariate Time Series (ARMA, ARIMA, ARFIMA)
-* AR(p) prosess
+1-Introduction
 
-* MA(q) prosess
+2-Univariate Time Series (ARMA, ARIMA, ARFIMA)
 
-* ARMA prosess
+          2-1- AR(p) prosess
+          2-2- MA(q) prosess
+          2-3- ARIMA(p,d,q) prosess
+          2-4- Unit Root Test: including 9 steps ADF test, KPSS Test, and ZA Test
+          2-5- ARFIMA Modeling
+          2-6- Time Series Forecasting and Evaluation
+          
+3-Volatility Modeling and Forecasting
+
+          3-1- ARCH and GARCH Modeling 
+          3-2- Volatility Forecast based on Rolling Approach
+          3-3- Volatility Forecast evaluation
+          
+4- Value at Risk (VaR)
+
+          4-1- Value at Risk
+          4-2- GARCH Value at Risk (VaR)
+          4-3- Value at Risk Rolling Window
+          4-4- Value at Risk Backtesting
+
+
+
+## 1-introduction 
+
+## 2-Univariate Time Series (ARMA, ARIMA, ARFIMA)
+
+### 2-1-AR(p) prosess
+
+### 2-2-MA(q) prosess
+
+### 2-3-ARIMA(p,d,q) prosess
 
 
 ```
@@ -32,7 +61,7 @@ Financial Time Series in R
 
 ```
 
-### Unit Root Test: 9 steps ADF test, KPSS Test, and ZA Test
+### 2-4-Unit Root Test: 9 steps ADF test, KPSS Test, and ZA Test
 
 ```
 #### 9 steps ADF Unit Root test 
@@ -91,13 +120,12 @@ summary(unitroot_za)
 ```
 
 
-### ARIMA modeling 
-
-### ARFIMA with long memory test
+### 2-5-ARFIMA Modeling
+#### ARFIMA with long memory test
 
 <img src="https://user-images.githubusercontent.com/77374087/135507740-fd5b577d-8b5a-4a9a-b5c4-1ccc96bf41c9.png" width="500" height="300">
 
-## univariate time series forecasting and Backtesting 
+### 2-6-Time Series Forecasting and Evaluation 
 
 ```
 data1=read.table("gold.txt",header=T)
@@ -154,9 +182,12 @@ fit4=arima(gold,order=c(3,1,0),season=list(order=c(0,0,0)))
 
 ```
 
-## Volatility Modeling and Forecasting 
+## 3-Volatility Modeling and Forecasting 
 
-### Rolling Approach
+### 3-1-ARCH and GARCH Modeling
+
+### 3-2-Volatility Forecast based on Rolling Approach
+
 This is a Fixed Rolling Window approach in which new data are added while old ones are dropped from the sample:
 
 <img src="https://user-images.githubusercontent.com/77374087/137956173-6e19d0d4-c99c-45fa-b49b-f26de7316052.png" width="600" height="300">
@@ -199,7 +230,7 @@ legend("topright", legend = c("return","SD(f)", "Mean(f)"),
 ```
 <img src="https://user-images.githubusercontent.com/77374087/133308479-959c9440-3e83-481e-bd5e-014b564b9161.png" width="400" height="250">
 
-### Volatility Forecast evaluation 
+### 3-3-Volatility Forecast evaluation 
 
 ```
 accuracy(Mean_vec, y[201:413])
@@ -207,11 +238,12 @@ accuracy(Mean_vec, y[201:413])
 Test set -0.2543846 1.684526 1.270509 97.90186 153.2406
 ```
 
-### using Roll function and foprecast fnction from rugarch Package
+#### using Roll function and foprecast fnction from rugarch Package
 
 
-## Value at Risk
+## 4-Value at Risk (VaR)
 
+### 4-1- Value at Risk
 
 <img src="https://user-images.githubusercontent.com/77374087/137940865-669bdc23-afc2-4e98-ae1d-915db7cf0421.png" width="600" height="300">
 
@@ -219,7 +251,7 @@ Test set -0.2543846 1.684526 1.270509 97.90186 153.2406
 <img src="https://user-images.githubusercontent.com/77374087/137941613-35c70ca6-a802-45bf-9e1b-85cf6b73825f.png" width="600" height="350">
 
 
-## GARCH Value at Risk 
+### 4-2-GARCH Value at Risk 
 
 We can use the conditional variance given by the GARCH(1,1) model for the estimation of Value at Risk (VaR). For the underlined asset’s distribution properties we can use the specific distribution such as  "norm","snorm", "std", "sstd","ged","sged", "nig","ghyp" (rugarch package). For this method Value at Risk is expressed as:
 
@@ -261,7 +293,7 @@ VaRplot(VaR99,y)
 
 <img src="https://user-images.githubusercontent.com/77374087/137942023-017c5f0c-c851-4e1d-b0b6-a16de6c9b221.png" width="500" height="300">
 
-## Rolling Window VaR forecasting 
+### 4-3- Value at Risk Rolling Window
 This is a Fixed Rolling Window approach in which new data are added while old ones are dropped from the sample:
 
 <img src="https://user-images.githubusercontent.com/77374087/137956173-6e19d0d4-c99c-45fa-b49b-f26de7316052.png" width="600" height="300">
@@ -310,7 +342,7 @@ for (t in (WE + 1):T){
 <img src="https://user-images.githubusercontent.com/77374087/137941105-9fd2db54-c454-4271-8fa4-ce7be5c90c8e.png" width="500" height="250">
 
 
-### Backtesting 
+### 4-4- Value at Risk Backtesting 
 
 ```
 BacktestVaR(y[301:1046], VaR_dwn[301:1046,3], 0.01)
