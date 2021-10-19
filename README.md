@@ -157,6 +157,11 @@ fit4=arima(gold,order=c(3,1,0),season=list(order=c(0,0,0)))
 ## Volatility Modeling and Forecasting 
 
 ### Rolling Approach
+This is a Fixed Rolling Window approach in which new data are added while old ones are dropped from the sample:
+
+<img src="https://user-images.githubusercontent.com/77374087/137956173-6e19d0d4-c99c-45fa-b49b-f26de7316052.png" width="600" height="300">
+
+
 ```
 nObs <- length(y)             # Total Number of observations
 from <- seq(1,200)            # In sample vector 
