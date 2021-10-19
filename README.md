@@ -95,7 +95,7 @@ summary(unitroot_za)
 
 ### ARFIMA with long memory test
 
-<img src="https://user-images.githubusercontent.com/77374087/135507740-fd5b577d-8b5a-4a9a-b5c4-1ccc96bf41c9.png" width="500" height="350">
+<img src="https://user-images.githubusercontent.com/77374087/135507740-fd5b577d-8b5a-4a9a-b5c4-1ccc96bf41c9.png" width="500" height="300">
 
 ## univariate time series forecasting and Backtesting 
 
@@ -208,13 +208,19 @@ Test set -0.2543846 1.684526 1.270509 97.90186 153.2406
 ## Value at Risk
 
 
-<img src="https://user-images.githubusercontent.com/77374087/137940865-669bdc23-afc2-4e98-ae1d-915db7cf0421.png" width="600" height="250">
+<img src="https://user-images.githubusercontent.com/77374087/137940865-669bdc23-afc2-4e98-ae1d-915db7cf0421.png" width="600" height="300">
 
 
-<img src="https://user-images.githubusercontent.com/77374087/137941613-35c70ca6-a802-45bf-9e1b-85cf6b73825f.png" width="400" height="300">
+<img src="https://user-images.githubusercontent.com/77374087/137941613-35c70ca6-a802-45bf-9e1b-85cf6b73825f.png" width="600" height="350">
 
 
 ## GARCH Value at Risk 
+
+We can use the conditional variance given by the GARCH(1,1) model for the estimation of Value at Risk (VaR). For the underlined asset’s distribution properties we can use the specific distribution such as  "norm","snorm", "std", "sstd","ged","sged", "nig","ghyp" (rugarch package). For this method Value at Risk is expressed as:
+
+![equation](https://latex.codecogs.com/svg.image?VaR_%7B%5Calpha%20%7D=%5Cmu%20&plus;%5Chat%7B%5Csigma%20%7D_%7Bt%7Ct-1%7D%5Ctimes%20F_%7B%5Calpha%20%7D%5E%7B-1%7D) 
+
+
 ```
 library(fGarch)
 g = garchFit(~garch(1,1),y,cond.dist = "norm",include.mean =
@@ -251,6 +257,11 @@ VaRplot(VaR99,y)
 <img src="https://user-images.githubusercontent.com/77374087/137942023-017c5f0c-c851-4e1d-b0b6-a16de6c9b221.png" width="500" height="300">
 
 ## Rolling Window VaR forecasting 
+This is a Fixed Rolling Window approach in which new data are added while old ones are dropped from the sample:
+
+<img src="https://user-images.githubusercontent.com/77374087/137956173-6e19d0d4-c99c-45fa-b49b-f26de7316052.png" width="600" height="300">
+
+
 
 
 ```
