@@ -144,7 +144,9 @@ VaR9
 
 VaR99=g@sigma.t*qnorm(p)
 
-# Value at Risk plot
+################### ################### ################### 
+# Value at Risk plot by using ggplot2 
+################### ################### ################### 
 
 
 VaRplot <- function(var,return) {
