@@ -33,34 +33,90 @@
 ####################################################
 ####################################################
 
+################### ################### ################### 
+###  Load packages (libeary)
+################### ################### ################### 
 
-################### code 5-1 #######################
 library(fGarch)
 library(rugarch)
 library(FinTS)
 library(forecast)
-setwd("E:/BOOK/Data and code")
-mydata = read.csv("IFB-dayli.csv")
-y=diff(log(mydata[,2]))*100  
+library(quantmod)
+library(rugarch)
+library(car)
+library(ggthemes)
+library(forecast)
+library(tseries)
+library(gridExtra)
+library(fPortfolio)
+library(ggplot2)
+library(dplyr)
+library(PerformanceAnalytics)
+
+
+################### ################### ################### 
+### download data
+################### ################### ################### 
+symbol.vec = c("^GSPC") # get S&P 500
+getSymbols(symbol.vec, from ="2017-01-03", to = "2020-01-03")
+
+### extract log-returns of adjusted prices
+
+SP500.return = CalculateReturns(GSPC[, "GSPC.Adjusted", drop=F], method="log")
+
+SP500.ret = SP500.return[-1,]
+
+colnames(SP500.ret) = "SP500.ret"
+
+
+# rerun plot and density plot
+
+p1 = qplot(x = 1:length(SP500.ret) , y = SP500.ret , geom = 'point') +
+  geom_point(color = 'blue') + 
+  geom_hline(yintercept = mean(SP500.ret) , color = 'red' , size = 1) + 
+  labs(x = '' , y = 'SP500.ret')
+
+p2 = qplot(SP500.ret , geom = 'density') + 
+  coord_flip() + geom_vline(xintercept = mean(SP500.ret) , color = 'red' , size = 1) +
+  geom_density(fill = 'lightgreen' , alpha = 0.4) + labs(x = '')
+
+grid.arrange(p1 , p2 , ncol = 2)
+
+################### ################### ################### 
+#   Value at Risk definition 
+################### ################### ################### 
+y=SP500.ret
+
+
+qplot(y , geom = 'histogram', bins = 40) + 
+  geom_histogram(fill = 'lightgreen' , bins = 40) +
+  geom_histogram(aes(y[y < quantile(y , 0.01)]) , fill = 'red' , bins = 40) +
+  labs(x = 'Daily Returns')
+
 
 T = length(y)  #length of data
 value = 100    # portfolio value
 p = 0.01       # probability
+
 ##############################################
 ########## univariate HS in R ################
 ##############################################
+
 ys = sort(y)          # sort returns
 op = T*p              # p % smallest
-VaR1 = -ys[op]*value  # VaR number
+VaR1 = -ys[op]        # VaR number
 VaR1
-ES1 = -mean(ys[1:op]) * value
+ES1 = -mean(ys[1:op]) 
 ES1
+
 ##############################################
 ######### univariate Normal in R #############
 ##############################################
+
 sigma= sd(y)         # estimate the volatility
 VaR3 =-sigma*qnorm(p)*value # calculate the VaR
 VaR3
+
 ##############################################
 ########### univariate MA in R ###############
 ##############################################
@@ -74,16 +130,37 @@ for (t in seq(T-5,T)){
 }
 VaR6
 ###########################################################
+
 library(fGarch)
 g = garchFit(~garch(1,1),y,cond.dist = "norm",include.mean =
                FALSE,trace = FALSE) 
 omega = g@fit$matcoef[1,1]
 alpha = g@fit$matcoef[2,1]
-beta = g@fit$matcoef[3,1]
+beta =  g@fit$matcoef[3,1]
 sigma2 = omega + alpha * y[T]^2 + beta * g@h.t[T]
 # compute sigma2 for t+1
-VaR9 = -sqrt(sigma2) * qnorm(p) * value
+VaR9 = sqrt(sigma2) * qnorm(p) * value
 VaR9
+
+VaR99=g@sigma.t*qnorm(p)
+
+# Value at Risk plot
+
+
+VaRplot <- function(var,return) {
+  
+  qplot(y = var , x = 1:length(var) , geom = 'line') +
+    geom_point(aes(x = 1:length(var) , y = return , color = as.factor(var< return)) , size = 3) + 
+    scale_color_manual(values = c('red' , 'green'),labels = c("Return<VaR", "Return"))+
+    labs(y = 'Daily Returns' , x = 'Test set return',color="---- VaR     " ) + 
+    theme(legend.position = "bottom")+
+    #theme(legend.position = c(.15, 1),legend.justification = c("right", "top"))+
+    ggtitle("VaR forecast")
+}
+
+
+
+VaRplot(VaR99,y)
 
 
 ################### code 5-1 #######################
@@ -101,6 +178,13 @@ par(mfrow = c(1, 1), mar = c(1.9, 4.3, 1.9, .5), mgp = c(2, .6, 0))
 qqnorm(y)
 qqline(y, distribution = qnorm)
 auto.arima(y, max.p = 5, max.q = 5)
+
+
+################### ################### ################### 
+# Rolling Window VaR Forecasting 
+# using for 
+################### ################### ################### 
+
 T = length(y)                   # number of observations for return y
 WE = 300                        # estimation window length
 p = 0.01                        # probability
@@ -135,6 +219,8 @@ for (i in 1:3){
   s = sd(VaR_upp[W1:T,i]) # VaR volatility
   cat(i,"VR",VR,"VaR vol",s,"\n") # print results
 }
+
+# VaR Plot
 matplot(cbind(y[W1:T],VaR_upp[W1:T,]),type="l")
 par(mfrow = c(1, 1), mar = c(1.9, 1.9, 1.9, .5), mgp = c(2, .6, 0))
 
@@ -229,7 +315,9 @@ par(mfrow = c(1, 2))
 plot(mod1)
 report(mod1, type = "VaR", VaR.alpha = 0.01, conf.level = 0.95)
 
-#####################################
+################## ################## #################### 
+# Comparison of different models in forecasting value at risk and Back testing 
+################## ################## #################### 
 mydata1 = read.csv("IFB-dayli.csv")
 y=diff(log(mydata1[,2]))*100 
 y=mydata1[2:1047,3]
